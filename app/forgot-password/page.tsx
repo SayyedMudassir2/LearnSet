@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
   // Add canonical URL (still good practice even with noindex)
   alternates: {
-    canonical: 'learnset.in',
+    canonical: 'https://learnset.vercel.app/forgot-password',
   },
 };
 

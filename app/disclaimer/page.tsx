@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     title: "Disclaimer | LearnSet.in",
     description:
       "Review the educational disclaimer for LearnSet.in regarding website usage, accuracy, and limitations.",
-    url: "https://learnset.in/disclaimer",
+    url: "https://learnset.vercel.app/disclaimer",
     siteName: "LearnSet",
     type: "website",
   },
 
   alternates: {
-    canonical: "https://learnset.in/disclaimer",
+    canonical: "https://learnset.vercel.app/disclaimer",
   },
 };
 
@@ -30,15 +30,15 @@ function JsonLd() {
       "@type": "WebPage",
       "name": "Disclaimer | LearnSet.in",
       "description": "Read the official disclaimer for using the LearnSet.in website and its educational services.",
-      "url": "https://learnset.in/disclaimer",
+      "url": "https://learnset.vercel.app/disclaimer",
       "publisher": {
         "@type": "Organization",
         "name": "LearnSet",
-        "url": "https://learnset.in"
+        "url": "https://learnset.vercel.app/disclaimer"
       },
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://learnset.in/search?query={search_term_string}",
+        "target": "https://learnset.vercel.app/search?query={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }`,

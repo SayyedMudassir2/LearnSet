@@ -96,19 +96,19 @@ export default function ForgotPasswordPage() {
             Link Sent!
           </CardTitle>
           <CardDescription className="mt-4 text-lg text-muted-foreground">
-            If the email address **{state.email || 'you provided'}** is registered, you will receive a password reset link shortly.
+            If the email address <strong>{state.email || 'you provided'}</strong> is registered, you will receive a password reset link shortly.
           </CardDescription>
           <div className="mt-6 space-y-3">
             <p className="font-semibold text-foreground">
               Didn't receive it?
             </p>
             <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1 mx-auto max-w-xs">
-                <li>Check your **Spam/Junk** folder.</li>
+                <li>Check your <strong>Spam/Junk</strong> folder.</li>
                 <li>Wait up to 5 minutes.</li>
             </ul>
           </div>
           <Separator className="my-6" />
-          <Link href="/login" passHref legacyBehavior>
+          <Link href="/login" passHref >
             <Button size="lg" className="w-full">
               <ArrowLeft className="mr-2 h-4 w-4" /> Go Back to Login
             </Button>

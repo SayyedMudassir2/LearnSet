@@ -11,13 +11,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'About LearnSet | Mission, Values & Team',
     description: 'Learn about who we are and our commitment to providing free educational resources for MSBTE students.',
-    url: 'learnset.in',
+    url: "https://learnset.vercel.app/about",
     siteName: 'LearnSet',
     type: 'website',
   },
   // Canonical URL to prevent duplication issues
   alternates: {
-    canonical: 'learnset.in',
+    canonical: "https://learnset.vercel.app/about",
   },
 };
 
@@ -28,12 +28,12 @@ function JsonLd() {
       "@type": "AboutPage",
       "name": "About Us | LearnSet",
       "description": "Learn about LearnSet’s mission to provide free MSBTE study materials.",
-      "url": "learnset.in",
+      "url": "https://learnset.vercel.app/about",
       "mainEntity": {
         "@type": "Organization",
         "name": "LearnSet",
         "description": "An independent educational platform offering free MSBTE study notes, syllabus, PYQs, and AI assistance.",
-        "url": "https://learnset.in",
+        "url": "https://learnset.vercel.app/about",
         "logo": "learnset.in",
         "contactPoint": {
           "@type": "ContactPoint",

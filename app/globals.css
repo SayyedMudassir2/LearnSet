@@ -138,7 +138,6 @@
 
   body {
     @apply bg-background text-foreground;
-    font-size: var(--fs-base);
     line-height: 1.6;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
@@ -158,4 +157,8 @@
 .defer-render {
   /* content-visibility: auto; */
   /* contain-intrinsic-size: 1px 1000px; */
+}
+
+strong {
+  font-weight: 700; /* font-bold */
 }

@@ -10,13 +10,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Account Login | LearnSet",
     description: "Securely access your LearnSet account features.",
-    url: "https://learnset.in/login",
+    url: "https://learnset.vercel.app/login",
     siteName: "LearnSet",
     type: "website",
   },
 
   alternates: {
-    canonical: "https://learnset.in/login",
+    canonical: "https://learnset.vercel.app/login",
   },
 
   robots: {
@@ -25,25 +25,18 @@ export const metadata: Metadata = {
   },
 };
 
-  function JsonLd() {
-    return {
-      __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        name: "Login Page",
-        description: "Log in to your LearnSet account.",
-        url: "https://learnset.in/login",
-      }),
-    };
-  }
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Login Page",
+  description: "Log in to your LearnSet account.",
+  url: "https://learnset.vercel.app/login",
+});
 
 export default function Page() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={JsonLd()}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <LoginPage />
     </>
   );

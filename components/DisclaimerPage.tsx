@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Mail,
@@ -10,21 +9,11 @@ import {
   Copyright,
   AlertTriangle,
   FileText,
-  Gavel, // Use Gavel for legal emphasis
-  CheckCircle, // Use CheckCircle for consent/agreement
+  Gavel,
+  CheckCircle,
   type LucideIcon,
 } from "lucide-react";
-import { Separator } from "@/components/ui/separator"; // Ensure Separator is imported
-
-// --- Metadata Strategy (External to Component, but critical for SEO) ---
-// Note: This needs to be defined in a `layout.tsx` or outside the component for Next.js 13+ app router
-/*
-export const metadata: Metadata = {
-  title: "Official Disclaimer | LearnSet - Legal Information",
-  description: "Official Disclaimer for LearnSet.in regarding content accuracy, liability, third-party links, and copyright. Effective Date: December 12, 2025.",
-  keywords: ["LearnSet disclaimer", "educational platform liability", "website usage policy", "copyright information"],
-};
-*/
+import { Separator } from "@/components/ui/separator"; 
 
 // --- Configuration & Content Strategy ---
 
@@ -48,9 +37,9 @@ const SECTIONS: DisclaimerSection[] = [
     icon: Gavel,
     content: (
       <>
-        This document outlines the limitations of liability and the educational intent of all content provided by **{COMPANY_NAME}** on the Service. By accessing this platform, you acknowledge and agree to these terms.
+        This document outlines the limitations of liability and the educational intent of all content provided by <strong>{COMPANY_NAME}</strong> on the Service. By accessing this platform, you acknowledge and agree to these terms.
         <br/><br/>
-        **{COMPANY_NAME}** is an educational platform designed to supplement the learning experience for MSBTE students and **does not provide professional academic, legal, financial, or medical advice.**
+        <strong>{COMPANY_NAME}</strong> is an educational platform designed to supplement the learning experience for MSBTE students and <strong>does not provide professional academic, legal, financial, or medical advice.</strong>
       </>
     ),
   },
@@ -69,10 +58,10 @@ const SECTIONS: DisclaimerSection[] = [
         >
           {WEBSITE_URL}
         </Link>{" "}
-        are published **in good faith** and strictly for **general informational and educational purposes only**.
+        are published <strong>in good faith</strong> and strictly for <strong>general informational and educational purposes only</strong>.
         <br />
         <br />
-        We make no representations or warranties, express or implied, about the **accuracy, adequacy, validity, reliability, availability, or completeness** of any information on the Service.
+        We make no representations or warranties, express or implied, about the <strong>accuracy, adequacy, validity, reliability, availability, or completeness</strong> of any information on the Service.
       </>
     ),
   },
@@ -84,7 +73,7 @@ const SECTIONS: DisclaimerSection[] = [
       <>
         While we strive for accuracy (especially in technical and syllabus-related content), the information may contain errors, omissions, or delays. Content may be updated or changed at any time without prior notice.
         <br/><br/>
-        **Any reliance you place on the content is strictly at your own risk.** We strongly advise cross-referencing information with official MSBTE circulars, recognized textbooks, or qualified academic professionals.
+        <strong>Any reliance you place on the content is strictly at your own risk.</strong> We strongly advise cross-referencing information with official MSBTE circulars, recognized textbooks, or qualified academic professionals.
       </>
     ),
   },
@@ -94,7 +83,7 @@ const SECTIONS: DisclaimerSection[] = [
     icon: AlertTriangle,
     content: (
       <>
-        In no event shall **{COMPANY_NAME}** be held liable for any direct, indirect, special, incidental, or consequential damages (including, but not limited to, damages for loss of profits, loss of data, or interruption of business) arising from the use or inability to use the website or its content.
+        In no event shall <strong>{COMPANY_NAME}</strong> be held liable for any direct, indirect, special, incidental, or consequential damages (including, but not limited to, damages for loss of profits, loss of data, or interruption of business) arising from the use or inability to use the website or its content.
       </>
     ),
   },
@@ -104,9 +93,9 @@ const SECTIONS: DisclaimerSection[] = [
     icon: ExternalLink,
     content: (
       <>
-        The Service may include links to external websites that are not owned, operated, or controlled by **{COMPANY_NAME}**. We do not endorse, warrant, or guarantee the information, products, or services offered by these third-party websites.
+        The Service may include links to external websites that are not owned, operated, or controlled by <strong>{COMPANY_NAME}</strong>. We do not endorse, warrant, or guarantee the information, products, or services offered by these third-party websites.
         <br/><br/>
-        We are not responsible for the privacy practices or content of third-party sites. Clicking on external links is **at your own discretion and risk.**
+        We are not responsible for the privacy practices or content of third-party sites. Clicking on external links is <strong>at your own discretion and risk.</strong>
       </>
     ),
   },
@@ -116,7 +105,7 @@ const SECTIONS: DisclaimerSection[] = [
     icon: Copyright,
     content: (
       <>
-        All original content, text, graphics, logos, and materials created by **{COMPANY_NAME}** on the Service are the property of **{COMPANY_NAME}** and protected by intellectual property laws.
+        All original content, text, graphics, logos, and materials created by <strong>{COMPANY_NAME}</strong> on the Service are the property of <strong>{COMPANY_NAME}</strong> and protected by intellectual property laws.
         <br/><br/>
         Unauthorized use, reproduction, or distribution of our proprietary content is strictly prohibited without explicit prior written consent. Where external materials (e.g., public domain images, licensed content) are used, credit is given where possible and appropriate licenses are maintained.
       </>
@@ -128,7 +117,7 @@ const SECTIONS: DisclaimerSection[] = [
     icon: FileText,
     content: (
       <>
-        **{COMPANY_NAME}** reserves the right to update, amend, or modify this Disclaimer at any time. Any changes will be posted on this page with a revised effective date.
+        <strong>{COMPANY_NAME}</strong> reserves the right to update, amend, or modify this Disclaimer at any time. Any changes will be posted on this page with a revised effective date.
         <br/><br/>
         Users are encouraged to review this page periodically to stay informed about our commitments. Continued use of the Service after the effective date of any modification constitutes acceptance of the changes.
       </>
@@ -174,10 +163,10 @@ const DisclaimerPage: React.FC = () => {
           Official Website Disclaimer
         </h1>
         <p className="mt-4 text-xl text-muted-foreground max-w-3xl mx-auto">
-          **{COMPANY_NAME}** is committed to clear communication. Please read these terms carefully before using our educational platform.
+          <strong>{COMPANY_NAME}</strong> is committed to clear communication. Please read these terms carefully before using our educational platform.
         </p>
         <p className="mt-2 text-sm text-foreground/70 font-medium">
-          Effective Date: **{EFFECTIVE_DATE}**
+          Effective Date: <strong>{EFFECTIVE_DATE}</strong>
         </p>
       </header>
 
@@ -229,7 +218,7 @@ const DisclaimerPage: React.FC = () => {
                     Your Consent and Agreement
                 </h3>
                 <p className="text-lg text-muted-foreground mt-2">
-                    By continuing to use our website, you **hereby consent** to our Disclaimer and agree to its terms. If you do not agree, your sole remedy is to cease use of the website immediately.
+                    By continuing to use our website, you <strong>hereby consent</strong> to our Disclaimer and agree to its terms. If you do not agree, your sole remedy is to cease use of the website immediately.
                 </p>
             </div>
           </div>

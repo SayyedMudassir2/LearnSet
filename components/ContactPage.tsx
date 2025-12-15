@@ -25,7 +25,7 @@ import {
   Loader2,
   HelpCircle,
 } from "lucide-react";
-import { cn } from "@/lib/utils"; // Assuming cn utility for conditional classes
+import { cn } from "@/lib/utils";
 
 // --- Configuration & Constants ---
 
@@ -163,7 +163,7 @@ export default function ContactPage() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-lg">
-                        We aim to respond to all non-urgent emails within **24–48 business hours**.
+                        We aim to respond to all non-urgent emails within <strong>24–48 business hours</strong>.
                     </p>
                     <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                         <AlertTriangle className="h-4 w-4 text-orange-500" />
@@ -182,7 +182,7 @@ export default function ContactPage() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground">
-                        Interested in collaboration, content contributions, or advertising? Please mention **"Partnership Inquiry"** in your subject line.
+                        Interested in collaboration, content contributions, or advertising? Please mention <strong>"Partnership Inquiry"</strong> in your subject line.
                     </p>
                 </CardContent>
             </Card>
@@ -257,13 +257,13 @@ export default function ContactPage() {
 
               {/* Submission Status Message (UX Feedback) */}
               {status === 'success' && (
-                <div className="p-4 bg-green-500/10 border border-green-500 text-green-700 dark:text-green-300 rounded-lg flex items-center gap-3">
+                <div role="status" aria-live="polite" className="p-4 bg-green-500/10 border border-green-500 text-green-700 dark:text-green-300 rounded-lg flex items-center gap-3">
                   <CheckCircle className="h-5 w-5" />
                   <span className="font-semibold">Success!</span> Your message has been sent. We will respond soon.
                 </div>
               )}
               {status === 'error' && (
-                <div className="p-4 bg-red-500/10 border border-red-500 text-red-700 dark:text-red-300 rounded-lg flex items-center gap-3">
+                <div role="status" aria-live="polite" className="p-4 bg-red-500/10 border border-red-500 text-red-700 dark:text-red-300 rounded-lg flex items-center gap-3">
                   <AlertTriangle className="h-5 w-5" />
                   <span className="font-semibold">Error!</span> Failed to send message. Please try emailing us directly or check your connection.
                 </div>

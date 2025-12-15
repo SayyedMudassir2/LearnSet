@@ -227,7 +227,7 @@ const PrivacyPolicyPage: React.FC = () => {
         }
       },
       // Root Margin (e.g., -100px from top) ensures the section is active when it passes the SCROLL_OFFSET line.
-      { root: null, rootMargin: `-${SCROLL_OFFSET}px 0px -50% 0px`, threshold: 0 }
+      { root: null, rootMargin: `-${SCROLL_OFFSET}px 0px -50% 0px`, threshold: 0.1 }
     );
 
     // Initial setup

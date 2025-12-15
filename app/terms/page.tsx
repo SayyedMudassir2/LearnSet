@@ -10,13 +10,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Terms and Conditions | LearnSet',
     description: 'Review the terms and conditions for using the LearnSet website and services.',
-    url: 'www.learnset.in',
-    siteName: 'learnset.in',
+    url: 'www.learnset.vercel.app',
+    siteName: 'learnset.vercel.app',
     type: 'website',
   },
   // Canonical link to prevent duplicate contents
   alternates: {
-    canonical: 'www.learnset.in',
+    canonical: 'www.learnset.vercel.app',
   },
 };
 
@@ -27,10 +27,10 @@ function JsonLd() {
       "@type": "WebPage",
       "name": "Terms and Conditions | learnset.in",
       "description": "Review the terms and conditions for using the learnset.in website and services.",
-      "url": "www.learnset.in",
+      "url": "www.learnset.vercel.app",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "www.learnset.in{search_term_string}",
+        "target": "www.learnset.vercel.app{search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }`,

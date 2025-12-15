@@ -15,13 +15,11 @@ import { Button } from "@/components/ui/button";
 import {
   Mail,
   Users,
-  Target,
   Heart,
   Globe,
   BookOpen,
-  Sparkles, // Using Sparkles for AI/Innovation instead of the confusing Mail icon
-  MessageSquare, // Alternative for social, but keeping branded ones for recognition
-  ShieldCheck, // Better icon for commitment/trust
+  Sparkles,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 // Branded icons are strategically kept for instant social recognition, despite potential bundle size impact.
@@ -71,25 +69,6 @@ const FEATURES = [
   },
 ];
 
-// --- SEO Metadata Strategy ---
-
-export const metadata: Metadata = {
-  title: "Our Mission | LearnSet – Empowering MSBTE Students with Free AI-Powered Education",
-  description:
-    "LearnSet is committed to providing free, high-quality, and AI-supported study materials for all MSBTE students. Discover our mission, values, and commitment to transparency.",
-  keywords: ["LearnSet mission", "MSBTE study resources free", "AI learning platform", "Diploma education support", "Community-driven learning"],
-  alternates: {
-    canonical: "https://yourwebsite.com/about", // Ensure canonical URL is set
-  },
-  openGraph: {
-    title: "The LearnSet Story: Free Education, Powered by AI.",
-    description: "Our mission to empower MSBTE students with free, high-quality, AI-powered study materials.",
-    url: "https://yourwebsite.com/about",
-    siteName: "LearnSet",
-    type: "website",
-  },
-};
-
 // --- Modular Helper Components ---
 
 interface FeatureCardProps {
@@ -134,7 +113,7 @@ export default function AboutPage() {
       {/* 1. Hero Section (Visual and Emotional Hook) */}
       <section className="mb-16 text-center">
         <div className="inline-flex items-center justify-center rounded-full bg-primary/10 px-4 py-2 mb-6 shadow-md border border-primary/20">
-          <Heart className="mr-2 h-5 w-5 text-primary animate-heartbeat" /> {/* Assuming a custom keyframe for pulse */}
+          <Heart className="mr-2 h-5 w-5 text-primary animate-pulse" />
           <span className="text-sm font-medium text-primary uppercase tracking-widest">
             The LearnSet Story
           </span>
@@ -146,7 +125,7 @@ export default function AboutPage() {
         
 
         <p className="mt-6 text-xl text-muted-foreground max-w-4xl mx-auto font-light">
-          We exist to eliminate the struggle of finding **reliable, structured, and free** study materials for every MSBTE student, leveraging community effort and cutting-edge technology.
+          We exist to eliminate the struggle of finding {" "} <strong className="font-bold">reliable, structured, and free</strong> study materials for every MSBTE student, leveraging community effort and cutting-edge technology.
         </p>
       </section>
 
@@ -158,10 +137,9 @@ export default function AboutPage() {
           <Image
             src="/images/about-mission-illustration.png" // Placeholder image path
             alt="LearnSet team and resources working together"
-            layout="fill"
-            objectFit="cover"
+            fill
             priority
-            className="transition-transform duration-500 hover:scale-105"
+            className="object-cover transition-transform duration-500 hover:scale-105"
           />
         </div>
 
@@ -170,7 +148,7 @@ export default function AboutPage() {
             Our Core Mission
           </h2>
           <p className="text-lg text-muted-foreground">
-            LearnSet was built on the belief that **financial status should never dictate educational quality**. We meticulously curate syllabus breakdowns, PYQs, detailed solutions, and concise notes to match the latest MSBTE requirements.
+            LearnSet was built on the belief that <strong>financial status should never dictate educational quality</strong>. We meticulously curate syllabus breakdowns, PYQs, detailed solutions, and concise notes to match the latest MSBTE requirements.
           </p>
 
           <blockquote className="border-l-4 border-primary pl-4 py-2 bg-primary/5 rounded-r-lg">
@@ -215,7 +193,7 @@ export default function AboutPage() {
 
           <CardContent className="space-y-4 text-muted-foreground text-lg">
             <p>
-              We are a passionate collective of **former MSBTE toppers, experienced educators, and cutting-edge developers**. Every piece of content is peer-reviewed and technology is utilized to scale quality.
+              We are a passionate collective of <strong>former MSBTE toppers, experienced educators, and cutting-edge developers</strong>. Every piece of content is peer-reviewed and technology is utilized to scale quality.
             </p>
             <div className="flex flex-wrap gap-2 pt-2">
               {['Educators', 'Alumni Toppers', 'Web Developers', 'AI Engineers'].map(role => (
@@ -240,11 +218,11 @@ export default function AboutPage() {
 
           <CardContent className="space-y-4 text-muted-foreground text-lg">
             <p>
-              We promise to keep our platform **free, up-to-date, and focused solely on student success**. Our commitment is to quality content and reliable resources, always.
+              We promise to keep our platform <strong>free, up-to-date, and focused solely on student success</strong>. Our commitment is to quality content and reliable resources, always.
             </p>
 
             <p className="p-3 border-l-4 border-destructive bg-destructive/5 rounded-r-lg">
-              **Non-Affiliation Disclosure:** LearnSet is an **independent, community-driven initiative**. We are not officially affiliated with MSBTE or any government body. All resources are created based on publicly available syllabi.
+              <strong>Non-Affiliation Disclosure:</strong> LearnSet is an <strong>independent, community-driven initiative</strong>. We are not officially affiliated with MSBTE or any government body. All resources are created based on publicly available syllabi.
             </p>
           </CardContent>
         </Card>

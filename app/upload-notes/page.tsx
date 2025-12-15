@@ -11,13 +11,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Share Your Study Notes | LearnSet',
     description: 'Help the community by uploading your MSBTE notes and materials.',
-    url: 'https://learnset.in/upload-notes',
+    url: 'https://learnset.vercel.app/upload-notes',
     siteName: 'LearnSet',
     type: 'website',
   },
   // Add canonical URL
   alternates: {
-    canonical: 'https://learnset.in/upload-notes',
+    canonical: 'https://learnset.vercel.app/upload-notes',
   },
 };
 
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
         "@type": "WebPage",
         "name": "Upload Notes Page | LearnSet",
         "description": "Share your MSBTE study materials with the community.",
-        "url": "https://learnset.in/upload-notes",
+        "url": "https://learnset.vercel.app/upload-notes",
         "contributor": {
             "@type": "Organization",
             "name": "LearnSet"

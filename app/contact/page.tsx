@@ -10,13 +10,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Contact LearnSet | Support & Inquiries',
     description: 'Reach out to the LearnSet team for all questions, feedback, and support needs.',
-    url: 'learnset.in',
+    url: "https://learnset.vercel.app/contact",
     siteName: 'LearnSet',
     type: 'website',
   },
   // Canonical URL to prevent duplication issues
   alternates: {
-    canonical: 'learnset.in',
+    canonical: "https://learnset.vercel.app/contact",
   },
 };
 
@@ -25,7 +25,7 @@ function JsonLd() {
     __html: `{
       "@context": "https://schema.org",
       "@type": "ContactPage",
-      "url": "learnset.in",
+      "url": "https://learnset.vercel.app/contact",
       "name": "Contact Us | LearnSet",
       "description": "Reach out to the LearnSet team for support.",
       "mainContentOfPage": {
@@ -40,7 +40,7 @@ function JsonLd() {
           "inLanguage": "en-US",
           "encodingFormat": "application/ld+json",
           "httpMethod": "POST",
-          "url": "learnset.in" 
+          "url": "https://learnset.vercel.app/contact" 
         },
         "instrument": {
           "@type": "Mail",

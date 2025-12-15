@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useEffect, useState, useMemo } from "react";
-import { useTheme } from "next-themes";
 import {
   FileText,
   AlertTriangle,
@@ -20,10 +19,10 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
 // --- Constants ---
-const websiteName = "munotes.in";
-const websiteUrl = "https://munotes.in";
-const contactEmail = "munotesandsolution@gmail.com";
-const companyNameAlt = "Learners World";
+const websiteName = "LearnSet";
+const websiteUrl = "https://learnset.vercel.app";
+const contactEmail = "learnset2569@gmail.com";
+const companyNameAlt = "LearnSet";
 const lastUpdated = "December 13, 2025";
 
 interface TermsSection {
@@ -211,7 +210,6 @@ const NavigationSidebar: React.FC<{
 
 // --- Main Terms Page ---
 const TermsPage: React.FC = () => {
-  const { theme } = useTheme();
   const [activeId, setActiveId] = useState<string | null>(termsSections[0].id);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -221,7 +219,7 @@ const TermsPage: React.FC = () => {
     return (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
         // Only set active if intersecting and it's the first section, or if intersecting and not fully above a higher-order section
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.2) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
           // This logic ensures that when multiple sections are in view, the one highest up is generally active.
           // By setting the threshold to 0.2, we activate the link when 20% of the section is visible.
           setActiveId(entry.target.id);
