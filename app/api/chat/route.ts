@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     // const responseText = aiResponse.choices[0].message.content;
 
     // MOCKING the actual API call result
-    const responseText = `You asked about: **${safeMessage.substring(0, 50)}...**\n\nHere is a *comprehensive*, high-quality response. This response is structured with markdown, including **bold text**, *italics*, and potential links/image placeholders to engage the audience, ensuring clean typography. We can also suggest related videos or diagrams here [Link to Resource].\n\n*   **Key Point 1:** Detail explanation [1].\n*   **Key Point 2:** Detail explanation [2].\n\n(This interaction is logged for analytics.)`;
+    const responseText = `You asked about: ${safeMessage.substring(0, 50)}...\n\nHere is a *comprehensive*, high-quality response. This response is structured with markdown, including **bold text**, *italics*, and potential links/image placeholders to engage the audience, ensuring clean typography. We can also suggest related videos or diagrams here [Link to Resource].\n\n*   **Key Point 1:** Detail explanation [1].\n*   **Key Point 2:** Detail explanation [2].\n\n(This interaction is logged for analytics.)`;
 
     // ANALYTICS: Log the interaction to a database or analytics service here
     // logAnalyticsEvent('chat_message_sent', { userId: 'user-id', prompt: safeMessage });
