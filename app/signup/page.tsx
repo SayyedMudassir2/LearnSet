@@ -4,31 +4,42 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { 
-  signInWithEmailAndPassword, 
-  GoogleAuthProvider, 
-  GithubAuthProvider, 
-  signInWithPopup 
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
+  UserCredential
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 
-const LoginPage = () => {
+const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleUserCreation = async (userCredential: UserCredential) => {
+    const user = userCredential.user;
+    await setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      role: 'user', // Assign a default role
+    });
+    router.push('/');
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push('/');
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await handleUserCreation(userCredential);
     } catch (err: any) {
       setError(err.message);
     }
@@ -37,8 +48,8 @@ const LoginPage = () => {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/');
+      const userCredential = await signInWithPopup(auth, provider);
+      await handleUserCreation(userCredential);
     } catch (err: any) {
       setError(err.message);
     }
@@ -47,8 +58,8 @@ const LoginPage = () => {
   const handleGitHubSignIn = async () => {
     const provider = new GithubAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/');
+      const userCredential = await signInWithPopup(auth, provider);
+      await handleUserCreation(userCredential);
     } catch (err: any) {
       setError(err.message);
     }
@@ -67,11 +78,11 @@ const LoginPage = () => {
     <div className="container mx-auto flex items-center justify-center py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
-          <CardDescription>Access your account</CardDescription>
+          <CardTitle>Sign Up</CardTitle>
+          <CardDescription>Create a new account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -93,13 +104,8 @@ const LoginPage = () => {
               />
             </div>
             {error && <p className="text-red-500">{error}</p>}
-            <Button type="submit" className="w-full">Login</Button>
+            <Button type="submit" className="w-full">Sign Up</Button>
           </form>
-          <div className="mt-4 text-center">
-            <Link href="/forgot-password">
-              <p className="text-sm text-gray-500 hover:underline">Forgot Password?</p>
-            </Link>
-          </div>
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t"></span>
@@ -112,10 +118,10 @@ const LoginPage = () => {
             <Button variant="outline" onClick={handleGoogleSignIn}>Google</Button>
             <Button variant="outline" onClick={handleGitHubSignIn}>GitHub</Button>
           </div>
-		  <div className="mt-4 text-center">
-            <Link href="/signup">
-				<p className="text-sm text-gray-500 hover:underline">Don't have an account? Sign up</p>
-			</Link>
+          <div className="mt-4 text-center">
+            <Link href="/login">
+              <p className="text-sm text-gray-500 hover:underline">Already have an account? Login</p>
+            </Link>
           </div>
         </CardContent>
       </Card>
@@ -123,4 +129,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;

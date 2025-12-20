@@ -148,7 +148,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   <aside
     // Strategic CSS: Uses fixed/sticky positioning. h-[calc(100vh-5rem)] ensures it fits the screen height below a typical header (5rem assumed for robustness).
     className={cn(
-      "fixed inset-y-0 right-0 z-50 w-64 bg-card shadow-2xl border-l border-border p-6 transition-transform duration-300",
+      "fixed inset-y-0 right-0 z-30 w-64 bg-card shadow-2xl border-l border-border p-6 transition-transform duration-300",
       "md:relative md:translate-x-0 md:h-[calc(100vh-5rem)] md:sticky md:top-20 md:overflow-y-auto md:shadow-none md:border-none",
       isMobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"
     )}

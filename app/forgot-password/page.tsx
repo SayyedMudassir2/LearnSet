@@ -1,29 +1,63 @@
-// app/forgot-password/page.tsx
-import type { Metadata } from "next";
-import ForgotPasswordPage from "@/components/ForgotPasswordPage";
+'use client';
 
-export const metadata: Metadata = {
-  // Title: Keep it concise and clear
-  title: "Forgot Password | LearnSet Account Recovery",
-  
-  // Description: Clear instructions for the user
-  description: "Securely reset your LearnSet account password. Enter your email address to receive a secure password reset link.",
-  
-  // Add noindex directive: This is crucial for a secure utility page
-  robots: {
-    index: false,
-    follow: false,
-    noarchive: true,
-  },
+import { useState } from 'react';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
-  // Add canonical URL (still good practice even with noindex)
-  alternates: {
-    canonical: 'https://learnset.vercel.app/forgot-password',
-  },
+const ForgotPasswordPage = () => {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage('');
+    setError('');
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMessage('Password reset email sent. Please check your inbox.');
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <div className="container mx-auto flex items-center justify-center py-12">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Forgot Password</CardTitle>
+          <CardDescription>Enter your email to reset your password</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            {message && <p className="text-green-500">{message}</p>}
+            {error && <p className="text-red-500">{error}</p>}
+            <Button type="submit" className="w-full">Send Reset Email</Button>
+          </form>
+          <div className="mt-4 text-center">
+            <Link href="/login">
+              <p className="text-sm text-gray-500 hover:underline">Back to Login</p>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 };
 
-export default function Page() {
-  return (
-    <ForgotPasswordPage />
-  );
-}
+export default ForgotPasswordPage;

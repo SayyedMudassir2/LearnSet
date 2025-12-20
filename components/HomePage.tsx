@@ -75,14 +75,14 @@ const COURSE_CATEGORIES: Category[] = [
     title: "College (PG)",
     description: "MCA, MBA, MTech",
     icon: Building,
-    href: "/college-pg",
+    href: "/coming-soon",
     keywords: "Explore PG Courses",
   },
   {
     title: "Engineering & Technical",
     description: "Diploma CSE, BTech (CSE, ECE, Mechanical), MTech",
     icon: Calculator,
-    href: "/engineering",
+    href: "/coming-soon",
     keywords: "Browse Engineering",
   },
   {
@@ -96,14 +96,14 @@ const COURSE_CATEGORIES: Category[] = [
     title: "Commerce & Management",
     description: "BMS, BBA, MBA Entrance, MCom",
     icon: Briefcase,
-    href: "/commerce",
+    href: "/coming-soon",
     keywords: "Explore Commerce",
   },
   {
     title: "Medical & Health Sciences",
     description: "BUMS, NEET, Allied Health Courses",
     icon: Stethoscope,
-    href: "/medical",
+    href: "/coming-soon",
     keywords: "Browse Medical Resources",
   },
 ];

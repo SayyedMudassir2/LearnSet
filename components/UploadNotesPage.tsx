@@ -1,6 +1,14 @@
-"use client";
+'use client';
 
 import { useState, useCallback } from "react";
+import { db } from "@/lib/firebase";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+
 // UI Components
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -150,39 +158,54 @@ export default function UploadNotesPage() {
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    setState(prev => ({ ...prev, error: "", success: "" }));
-
+    setState((prev) => ({ ...prev, error: "", success: "" }));
+  
     const validationResult = uploadSchema.safeParse(formData);
     if (!validationResult.success) {
-      // UX: Show the first critical error from Zod
-      setState(prev => ({ ...prev, error: validationResult.error.issues[0].message }));
+      setState((prev) => ({ ...prev, error: validationResult.error.issues[0].message }));
       return;
     }
-
+  
     if (!formData.file) {
-      setState(prev => ({ ...prev, error: "Submission requires a file. Please select or drag your notes." }));
+      setState((prev) => ({ ...prev, error: "Submission requires a file. Please select or drag your notes." }));
       return;
     }
-
-    // Start loading state
-    setState(prev => ({ ...prev, loading: true }));
-
+  
+    setState((prev) => ({ ...prev, loading: true }));
+  
     try {
-      // PERFORMANCE: Simulate API latency (Target: 1-2 seconds for large upload)
-      await new Promise(resolve => setTimeout(resolve, 1800));
-
-      // Strategy: Clear data and provide success feedback
-      setState(prev => ({
+      const storage = getStorage();
+      const fileName = `${Date.now()}-${formData.file.name}`;
+      const storageRef = ref(storage, `notes/${formData.branch}/${formData.semester}/${fileName}`);
+      
+      await uploadBytes(storageRef, formData.file);
+      const downloadURL = await getDownloadURL(storageRef);
+  
+      await addDoc(collection(db, "notes"), {
+        branch: formData.branch,
+        subject: formData.subject,
+        semester: formData.semester,
+        title: formData.title,
+        description: formData.description,
+        fileUrl: downloadURL,
+        fileName: formData.file.name,
+        fileSize: formData.file.size,
+        fileType: formData.file.type,
+        createdAt: serverTimestamp(),
+        approved: false, // Default to not approved
+      });
+  
+      setState((prev) => ({
         ...prev,
         success: "Notes submitted successfully! Thank you for contributing. We will review your content shortly.",
         formData: initialFormData,
         filePreview: undefined,
       }));
-    } catch {
-      // SECURITY/RELIABILITY: Generic error message for client-side
-      setState(prev => ({ ...prev, error: "Upload failed due to a network or server error. Please check your connection and try again." }));
+    } catch (err) {
+      console.error("Error uploading file or saving metadata:", err);
+      setState((prev) => ({ ...prev, error: "Upload failed due to a network or server error. Please check your connection and try again." }));
     } finally {
-      setState(prev => ({ ...prev, loading: false }));
+      setState((prev) => ({ ...prev, loading: false }));
     }
   }, [formData]);
 

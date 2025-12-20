@@ -1,67 +1,75 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { 
-  Menu, 
-  X, 
-  Lightbulb, 
-  Upload, 
-  Sun, 
-  Moon, 
-  ChevronDown, 
-  ChevronUp,
-  User,
-  HelpCircle,
-  FileText,
-  Info,
-  Shield
+  Menu, X, Upload, Sun, Moon, ChevronDown, User,
+  HelpCircle, FileText, Info, Shield, LogOut, LayoutDashboard,
+  Sparkles
 } from "lucide-react"; 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils"; // Assuming you have a cn utility, if not, standard template literals work
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
-/* -------------------------------------------
-   1. Data Modeling & Strategy
-   Centralizing data allows for easier updates 
-   without touching the render logic.
-------------------------------------------- */
-
+// --- Types & Constants ---
 interface NavItem {
   name: string;
   href: string;
-  icon?: React.ElementType; // Optional icon for mobile/rich menus
+  icon?: React.ElementType;
+  isSpecial?: boolean;
 }
 
-const NAV_LINKS: NavItem[] = [
-  { name: "Home", href: "/" },
-  { name: "Study Materials", href: "/study-materials" },
-  { name: "PYQs", href: "/pyqs" },
-];
+// --- Framer Motion Variants ---
+const dropdownVariants: Variants = {
+  hidden: { 
+    opacity: 0, 
+    y: 10, 
+    scale: 0.95, 
+    pointerEvents: 'none' 
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1, 
+    pointerEvents: 'auto',
+    transition: { 
+      type: "spring",
+      stiffness: 300, 
+      damping: 20 
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    y: 5, 
+    scale: 0.98, 
+    transition: { duration: 0.1 }
+  }
+};
 
-const MORE_LINKS: NavItem[] = [
-  { name: "About Us", href: "/about", icon: Info },
-  { name: "Contact Us", href: "/contact", icon: HelpCircle },
-  { name: "FAQ", href: "/faq", icon: HelpCircle },
-  { name: "Privacy Policy", href: "/privacy-policy", icon: Shield },
-  { name: "Terms of Service", href: "/terms", icon: FileText },
-];
+const mobileMenuVariants: Variants = {
+  closed: { 
+    x: "100%", 
+    transition: { 
+      type: "spring", 
+      stiffness: 400, 
+      damping: 40 
+    } 
+  },
+  open: { 
+    x: 0, 
+    transition: { 
+      type: "spring", 
+      stiffness: 400, 
+      damping: 40 
+    } 
+  }
+};
 
-const ACTION_BUTTONS = [
-  { name: "Upload Notes", href: "/upload-notes", icon: Upload, variant: "outline" },
-  { name: "Login", href: "/login", icon: User, variant: "ghost" }, // UX: 'Login' usually needs less visual weight than the CTA
-  { name: "Ask with AI", href: "/ask-ai", icon: Lightbulb, variant: "default" },
-] as const;
-
-/* -------------------------------------------
-   2. Custom Hooks
-------------------------------------------- */
-
-/**
- * Enhanced Theme Hook
- * Prevents hydration mismatch (flickering) and handles system preference.
- */
+// --- Custom Theme Hook ---
 function useTheme() {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [mounted, setMounted] = useState(false);
@@ -69,10 +77,8 @@ function useTheme() {
   useEffect(() => {
     setMounted(true);
     const savedTheme = localStorage.getItem("theme") as "light" | "dark";
-    // Strategy: Fallback to system preference if no save exists, otherwise default to dark
     const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
-    
     setTheme(initialTheme);
     document.documentElement.classList.toggle("dark", initialTheme === "dark");
   }, []);
@@ -87,285 +93,336 @@ function useTheme() {
   return { theme, toggleTheme, mounted };
 }
 
-/* -------------------------------------------
-   3. Sub-Components (Modular Design)
-------------------------------------------- */
-
-const isActive = (pathname: string, href: string) =>
-  pathname === href || (pathname.startsWith(href) && href !== "/");
-
-const Logo = ({ theme }: { theme: string }) => (
-  <Link 
-    href="/" 
-    className="flex items-center gap-2 group focus:outline-none rounded-md" 
-    aria-label="LearnSet Home"
-  >
-    <div className="relative w-10 h-10 transition-transform duration-300 group-hover:scale-105">
-      {/* Strategy: Use exact sizing to prevent layout shift */}
-      <Image
-        src={theme === "dark" ? "/logo/logo-dark.png" : "/logo/logo-light.png"}
-        alt="LearnSet Logo"
-        fill
-        className="object-contain"
-        sizes="(max-width: 768px) 40px, 48px"
-        priority
-      />
-    </div>
-    <span className="font-bold text-xl tracking-tight hidden sm:block text-foreground">
-      LearnSet
-    </span>
-  </Link>
-);
-
-const DesktopMenu = ({ pathname }: { pathname: string }) => {
-  const isMoreActive = MORE_LINKS.some((l) => isActive(pathname, l.href));
-
-  return (
-    <ul className="hidden md:flex items-center gap-1">
-      {NAV_LINKS.map((link) => (
-        <li key={link.name}>
-          <Link
-            href={link.href}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-              isActive(pathname, link.href)
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
-          >
-            {link.name}
-          </Link>
-        </li>
-      ))}
-
-      {/* Dropdown Strategy: Focus-within allows keyboard users to keep menu open */}
-      <li className="relative group ml-1" tabIndex={0}>
-        <button
-          className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium transition-colors ${
-            isMoreActive ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-          }`}
-          aria-haspopup="true"
-        >
-          More <ChevronDown className="h-4 w-4 transition-transform duration-200 group-hover:-rotate-180" />
-        </button>
-
-        <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 transform origin-top-right z-50">
-          <ul className="w-56 bg-background/95 backdrop-blur-md border border-border rounded-xl shadow-lg p-2 flex flex-col gap-1">
-            {MORE_LINKS.map((item) => {
-              const Icon = item.icon;
-              return (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                      isActive(pathname, item.href)
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-foreground/80 hover:bg-muted hover:text-foreground"
-                    }`}
-                  >
-                    {Icon && <Icon className="h-4 w-4 opacity-70" />}
-                    {item.name}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </li>
-    </ul>
-  );
-};
-
-/* -------------------------------------------
-   4. Main Navbar Component
-------------------------------------------- */
+function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () => void) {
+  useEffect(() => {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      if (!ref.current || ref.current.contains(event.target as Node)) {
+        return;
+      }
+      handler();
+    };
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
+    return () => {
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    };
+  }, [ref, handler]);
+}
 
 export default function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const pathname = usePathname();
   const { theme, toggleTheme, mounted } = useTheme();
+  const { user, isAdmin, logout } = useAuth();
 
-  // UX: Close mobile menu on route change
-  useEffect(() => {
+  // Menu States
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  
+  const moreTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const profileTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const navLinks = useMemo<NavItem[]>(() => [
+    { name: "Home", href: "/" },
+    { name: "Study Materials", href: "/study-materials" },
+    { name: "PYQs", href: "/pyqs" },
+  ], []);
+
+  const moreLinks = useMemo<NavItem[]>(() => [
+    { name: "About Us", href: "/about", icon: Info },
+    { name: "Contact Us", href: "/contact", icon: HelpCircle },
+    { name: "FAQ", href: "/faq", icon: HelpCircle },
+    { name: "Privacy Policy", href: "/privacy-policy", icon: Shield },
+    { name: "Terms of Service", href: "/terms", icon: FileText },
+  ], []);
+
+  const closeAllMenus = useCallback(() => {
     setMobileOpen(false);
-    setMobileMoreOpen(false);
-  }, [pathname]);
-
-  // Accessibility: Close on Escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileOpen(false);
-    };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    setIsMoreOpen(false);
+    setProfileOpen(false);
+    document.body.style.overflow = "unset";
   }, []);
 
-  // Prevent scroll when mobile menu is open
+  // Sync state with Navigation & handle resize
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) { // lg breakpoint
+        closeAllMenus();
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    closeAllMenus(); // Close on path change
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, [pathname, closeAllMenus]);
+
+  // Handle Scroll Locking for Mobile
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "unset";
   }, [mobileOpen]);
 
-  // Avoid rendering theme-dependent UI until mounted to prevent hydration errors
-  if (!mounted) return <div className="h-16 border-b bg-background" />; 
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileProfileMenuRef = useRef<HTMLDivElement>(null);
+  
+  useClickOutside(profileMenuRef, () => setProfileOpen(false));
+  useClickOutside(mobileProfileMenuRef, () => setProfileOpen(false));
+
+  if (!mounted) return <div className="h-16 sm:h-20 border-b bg-background/50 animate-pulse" />;
+
+  const ProfileDropdown = () => (
+    <div className="bg-popover border border-border/50 rounded-2xl shadow-2xl p-2">
+      <div className="px-3 py-2 mb-1">
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Account</p>
+        <p className="text-sm font-medium truncate">{user?.email}</p>
+      </div>
+      <Separator className="mb-1 opacity-50" />
+      {isAdmin && (
+        <Link href="/admin" onClick={closeAllMenus} className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm hover:bg-accent transition-colors">
+          <LayoutDashboard size={16} /> Admin Panel
+        </Link>
+      )}
+      <Link href="/profile" onClick={closeAllMenus} className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm hover:bg-accent transition-colors">
+        <User size={16} /> My Profile
+      </Link>
+      <button 
+        onClick={() => { logout(); closeAllMenus(); }}
+        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-rose-500 hover:bg-rose-500/10 transition-colors"
+      >
+        <LogOut size={16} /> Logout
+      </button>
+    </div>
+  );
 
   return (
     <>
-      <nav
-        className="fixed top-0 left-0 w-full z-50 bg-background/80 dark:bg-[#0f1115]/80 backdrop-blur-xl border-b border-border/40 transition-all duration-300"
-        role="navigation"
-        aria-label="Main navigation"
+      <nav 
+        className="fixed top-0 left-0 w-full z-50 bg-background/80 dark:bg-[#090a0c]/80 backdrop-blur-xl border-b border-border/40 transition-all duration-300"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
             
-            {/* 1. Brand Identity */}
-            <Logo theme={theme} />
+            <Link href="/" onClick={closeAllMenus} className="flex items-center gap-2 group outline-none">
+              <div className="relative w-10 h-10 transition-transform duration-500 group-hover:rotate-[360deg]">
+                <Image
+                  src={theme === "dark" ? "/logo/logo-dark.png" : "/logo/logo-light.png"}
+                  alt="LearnSet"
+                  fill
+                  className="object-contain"
+                  sizes="40px"
+                  priority
+                />
+              </div>
+              <span className="font-black text-2xl tracking-tighter hidden sm:block bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60">
+                LearnSet
+              </span>
+            </Link>
 
-            {/* 2. Desktop Navigation (Center) */}
-            <DesktopMenu pathname={pathname} />
-
-            {/* 3. Desktop Actions (Right) */}
-            <div className="hidden md:flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                className="rounded-full text-muted-foreground hover:text-foreground"
-                aria-label="Toggle Theme"
-              >
-                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
-              
-              <div className="h-6 w-px bg-border/60 mx-1" /> {/* Divider */}
-
-              {ACTION_BUTTONS.map(({ name, href, icon: Icon, variant }) => (
-                <Button 
-                  key={name} 
-                  variant={variant as any} 
-                  size={variant === "default" ? "default" : "sm"}
-                  asChild 
-                  className={variant === "default" ? "shadow-md shadow-primary/20" : ""}
-                >
-                  <Link href={href} className="flex items-center gap-2">
-                    {Icon && <Icon className="h-4 w-4" />}
-                    {name}
+            <ul className="hidden lg:flex items-center gap-1">
+              {navLinks.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      "relative px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300",
+                      pathname === link.href 
+                        ? "text-primary" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                    )}
+                  >
+                    {link.name}
+                    {pathname === link.href && (
+                      <motion.div layoutId="nav-underline" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full" />
+                    )}
                   </Link>
-                </Button>
+                </li>
               ))}
+
+              <li 
+                className="relative"
+                onMouseEnter={() => {
+                  if (moreTimeoutRef.current) clearTimeout(moreTimeoutRef.current);
+                  setIsMoreOpen(true);
+                }}
+                onMouseLeave={() => {
+                  moreTimeoutRef.current = setTimeout(() => setIsMoreOpen(false), 150);
+                }}
+              >
+                <button className={cn(
+                  "flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold transition-colors outline-none",
+                  isMoreOpen ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+                )}>
+                  More <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", isMoreOpen && "rotate-180")} />
+                </button>
+
+                <AnimatePresence>
+                  {isMoreOpen && (
+                    <motion.div 
+                      variants={dropdownVariants}
+                      initial="hidden" animate="visible" exit="exit"
+                      className="absolute right-0 top-full pt-3 w-60"
+                    >
+                      <div className="bg-popover border border-border/50 rounded-2xl shadow-2xl p-2 backdrop-blur-2xl">
+                        {moreLinks.map((item) => (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            onClick={closeAllMenus}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-all group"
+                          >
+                            <div className="p-1.5 rounded-lg bg-muted group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                              {item.icon && <item.icon size={16} />}
+                            </div>
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </li>
+            </ul>
+
+            <div className="hidden md:flex items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full hover:bg-primary/5">
+                <AnimatePresence mode="wait">
+                  {theme === "dark" ? (
+                    <motion.div key="sun" initial={{ scale: 0, rotate: 90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0, rotate: -90 }}><Sun size={20} /></motion.div>
+                  ) : (
+                    <motion.div key="moon" initial={{ scale: 0, rotate: 90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0, rotate: -90 }}><Moon size={20} /></motion.div>
+                  )}
+                </AnimatePresence>
+              </Button>
+
+              <div className="h-8 w-[1px] bg-border/40 mx-2" />
+
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="hidden xl:flex rounded-full border-border/40 hover:bg-accent transition-all" asChild>
+                    <Link href="/upload-notes"><Upload className="h-4 w-4 mr-2 text-primary" /> Upload</Link>
+                  </Button>
+                  
+                  <Button variant="default" size="sm" className="rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95" asChild>
+                    <Link href="/askwithai"><Sparkles className="h-4 w-4 mr-2" /> Ask AI</Link>
+                  </Button>
+
+                  <div 
+                    className="relative ml-2"
+                    ref={profileMenuRef}
+                    onMouseEnter={() => {
+                      if (window.innerWidth >= 768) {
+                        if (profileTimeoutRef.current) clearTimeout(profileTimeoutRef.current);
+                        setProfileOpen(true);
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (window.innerWidth >= 768) {
+                        profileTimeoutRef.current = setTimeout(() => setProfileOpen(false), 150);
+                      }
+                    }}
+                  >
+                    <div className="p-0.5 rounded-full bg-gradient-to-tr from-primary/50 to-purple-500/50">
+                      <Button variant="secondary" size="icon" className="rounded-full border-2 border-background" onClick={() => setProfileOpen(!profileOpen)}>
+                        <User size={20} />
+                      </Button>
+                    </div>
+
+                    <AnimatePresence>
+                      {profileOpen && (
+                        <motion.div 
+                          variants={dropdownVariants}
+                          initial="hidden" animate="visible" exit="exit"
+                          className="absolute right-0 top-full pt-3 w-52"
+                        >
+                          <ProfileDropdown />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" className="rounded-full" asChild><Link href="/login">Login</Link></Button>
+                  <Button variant="default" size="sm" className="rounded-full px-6" asChild><Link href="/signup">Sign Up</Link></Button>
+                </div>
+              )}
             </div>
 
-            {/* 4. Mobile Toggle */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 text-foreground/80 hover:text-foreground focus:outline-none"
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              aria-expanded={mobileOpen}
-            >
-              {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+            <div className="flex items-center gap-2 md:hidden">
+              {user && (
+                <div className="relative mr-1" ref={mobileProfileMenuRef}>
+                  <div className="p-0.5 rounded-full bg-gradient-to-tr from-primary/50 to-purple-500/50">
+                    <Button variant="secondary" size="icon" className="rounded-full border-2 border-background w-8 h-8 sm:w-10 sm:h-10" onClick={() => setProfileOpen(!profileOpen)}>
+                      <User size={18} />
+                    </Button>
+                  </div>
+                  <AnimatePresence>
+                    {profileOpen && (
+                      <motion.div 
+                        variants={dropdownVariants}
+                        initial="hidden" animate="visible" exit="exit"
+                        className="absolute right-0 top-full pt-3 w-52"
+                      >
+                        <ProfileDropdown />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+              <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
+                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+              </Button>
+              <button
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="p-2 text-foreground/80 hover:text-foreground transition-transform active:scale-90"
+              >
+                {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* -------------------------------------------
-          5. Mobile Menu Overlay
-          Strategy: Separate from nav flow to handle z-index and scrolling perfectly
-      ------------------------------------------- */}
-      <div
-        className={`fixed inset-0 z-40 bg-background/95 backdrop-blur-xl pt-20 px-6 transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
-          mobileOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex flex-col h-full overflow-y-auto pb-10">
-          {/* Mobile Links */}
-          <nav className="space-y-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`flex items-center justify-between p-3 rounded-xl text-lg font-medium transition-colors ${
-                  isActive(pathname, link.href)
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground/80 hover:bg-muted"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div 
+            variants={mobileMenuVariants}
+            initial="closed" animate="open" exit="closed"
+            className="fixed inset-0 z-[45] bg-background lg:hidden overflow-y-auto"
+          >
+            <div className="flex flex-col pt-24 pb-12 px-8 h-full">
+              <div className="space-y-6">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">Menu</p>
+                {navLinks.map(link => (
+                  <Link key={link.name} href={link.href} onClick={closeAllMenus} className="block text-4xl font-black tracking-tighter hover:text-primary transition-colors">
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
 
-            {/* Mobile Accordion for 'More' */}
-            <div className="pt-2">
-              <button
-                onClick={() => setMobileMoreOpen(!mobileMoreOpen)}
-                className="w-full flex items-center justify-between p-3 rounded-xl text-lg font-medium text-foreground/80 hover:bg-muted"
-              >
-                More 
-                {mobileMoreOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </button>
-              
-              <div
-                className={`overflow-hidden transition-all duration-300 ${
-                  mobileMoreOpen ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
-                }`}
-              >
-                <div className="pl-4 space-y-1 border-l-2 border-border/50 ml-3">
-                  {MORE_LINKS.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="block p-2 text-base text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+              <div className="mt-12 space-y-4">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">Platform</p>
+                <div className="grid grid-cols-1 gap-3">
+                  <Button size="lg" className="w-full justify-start gap-4 rounded-2xl h-16 text-lg" asChild>
+                    <Link href="/askwithai"><Sparkles /> Ask with AI</Link>
+                  </Button>
+                  <Button size="lg" variant="outline" className="w-full justify-start gap-4 rounded-2xl h-16 text-lg" asChild>
+                    <Link href="/upload-notes"><Upload /> Upload Notes</Link>
+                  </Button>
                 </div>
               </div>
-            </div>
-          </nav>
 
-          {/* Mobile Footer Actions */}
-          <div className="mt-auto pt-8 space-y-4">
-            <div className="flex items-center justify-between px-3 py-4 bg-muted/30 rounded-xl border border-border/50">
-              <span className="text-sm font-medium">Appearance</span>
-              <div className="flex bg-background rounded-full p-1 border border-border">
-                <button
-                  onClick={() => theme !== "light" && toggleTheme()}
-                  className={`p-2 rounded-full transition-all ${theme === "light" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground"}`}
-                >
-                  <Sun className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => theme !== "dark" && toggleTheme()}
-                  className={`p-2 rounded-full transition-all ${theme === "dark" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground"}`}
-                >
-                  <Moon className="h-4 w-4" />
-                </button>
+              <div className="mt-auto pt-12 grid grid-cols-2 gap-4">
+                {moreLinks.slice(0, 4).map(link => (
+                  <Link key={link.name} href={link.href} onClick={closeAllMenus} className="text-sm font-semibold text-muted-foreground hover:text-foreground">
+                    {link.name}
+                  </Link>
+                ))}
               </div>
             </div>
-
-            <div className="grid gap-3">
-               {ACTION_BUTTONS.map(({ name, href, icon: Icon, variant }) => (
-                <Button 
-                  key={name} 
-                  variant={variant as any} 
-                  size="lg" 
-                  className="w-full justify-center gap-2"
-                  asChild
-                >
-                  <Link href={href}>
-                    {Icon && <Icon className="h-5 w-5" />}
-                    {name}
-                  </Link>
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
