@@ -50,26 +50,25 @@ interface FeaturedResource {
 }
 
 const COURSE_CATEGORIES: Category[] = [
-  // ... (Data remains the same for content consistency)
   {
     title: "School Education",
-    description: "8th–10th (Maharashtra Board)",
+    description: "1st–10th",
     icon: School,
-    href: "/school",
+    href: "/resources?mode=school",
     keywords: "Browse School Resources",
   },
   {
     title: "Higher Secondary",
     description: "11th & 12th (Science / Commerce / Arts)",
     icon: BookOpen,
-    href: "/higher-secondary",
+    href: "/resources?mode=higher-secondary",
     keywords: "Browse 11th & 12th Resources",
   },
   {
     title: "College (UG)",
     description: "BSc IT, BSc CS, BMS, BA, BCom",
     icon: GraduationCap,
-    href: "/college-ug",
+    href: "/resources?mode=ug",
     keywords: "Explore UG Courses",
   },
   {
@@ -90,7 +89,7 @@ const COURSE_CATEGORIES: Category[] = [
     title: "Entrance Exams",
     description: "NEET, JEE, MHT-CET, MCA-CET, MBA-CET",
     icon: Zap,
-    href: "/entrance-exams",
+    href: "/resources?mode=entrance",
     keywords: "Prepare for Entrance",
   },
   {
