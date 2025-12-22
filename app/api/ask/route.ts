@@ -14,7 +14,7 @@ export async function POST() {
 
       for (const chunk of chunks) {
         controller.enqueue(encoder.encode(chunk));
-        await new Promise(r => setTimeout(r, 60));
+        await new Promise(r => setTimeout(r, 0));
       }
 
       controller.close();

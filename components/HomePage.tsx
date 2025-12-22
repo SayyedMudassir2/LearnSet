@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react"; // Added useState for interactive elements
+import Image from "next/image";
+import { useState, memo } from "react"; 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardDescription, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,20 +18,17 @@ import {
   Star,
   Users,
   Shield,
-  Clock,
   TrendingUp,
-  Heart,
+  ArrowRight,
+  School,
   GraduationCap,
   Building,
   Briefcase,
   Stethoscope,
   Calculator,
-  ArrowRight,
-  School,
-  Monitor, // New icon for visual design
   type LucideIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils"; // Assuming a utility function for conditional classes
+import { cn } from "@/lib/utils"; 
 
 // --- Data Structures (Refined) ---
 
@@ -156,7 +154,7 @@ const HERO_FEATURES = [
 
 // --- Reusable Components (Enhanced UX) ---
 
-const CategoryCard: React.FC<Category> = ({ title, description, icon: Icon, href, keywords }) => (
+const CategoryCard: React.FC<Category> = memo(({ title, description, icon: Icon, href, keywords }) => (
   <Card className="border-border/40 bg-card/70 backdrop-blur-sm shadow-xl hover:shadow-2xl transition duration-300 hover:scale-[1.03] h-full flex flex-col group cursor-pointer">
     <CardHeader className="text-center pb-4">
       <Icon className="h-12 w-12 mx-auto text-primary mb-4 group-hover:rotate-3 transition-transform" />
@@ -176,9 +174,9 @@ const CategoryCard: React.FC<Category> = ({ title, description, icon: Icon, href
       </Button>
     </CardContent>
   </Card>
-);
+));
 
-const FeaturedResourceCard: React.FC<FeaturedResource> = ({ type, title, description, href }) => (
+const FeaturedResourceCard: React.FC<FeaturedResource> = memo(({ type, title, description, href }) => (
   <Card className="border-border/40 shadow-lg hover:shadow-xl transition h-full flex flex-col">
     <CardHeader className="pb-4">
       <Badge 
@@ -203,7 +201,7 @@ const FeaturedResourceCard: React.FC<FeaturedResource> = ({ type, title, descrip
       </Button>
     </CardContent>
   </Card>
-);
+));
 
 // --- Main Component ---
 

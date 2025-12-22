@@ -303,7 +303,7 @@ export default function Navbar() {
                   </Button>
                   
                   <Button variant="default" size="sm" className="rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95" asChild>
-                    <Link href="/askwithai"><Sparkles className="h-4 w-4 mr-2" /> Ask AI</Link>
+                    <Link href="/ask-ai"><Sparkles className="h-4 w-4 mr-2" /> Ask AI</Link>
                   </Button>
 
                   <div 
@@ -343,7 +343,7 @@ export default function Navbar() {
               ) : (
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="sm" className="rounded-full" asChild><Link href="/login">Login</Link></Button>
-                  <Button variant="default" size="sm" className="rounded-full px-6" asChild><Link href="/signup">Sign Up</Link></Button>
+                  <Button variant="default" size="sm" className="rounded-full px-6" asChild><Link href="/register">Sign Up</Link></Button>
                 </div>
               )}
             </div>

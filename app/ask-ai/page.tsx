@@ -85,7 +85,8 @@ export default function AskAIPage() {
       timestamp: Date.now(),
     };
 
-    setChatHistory(prev => [...prev, userMessage]);
+    const updatedChatHistory = [...chatHistory, userMessage];
+    setChatHistory(updatedChatHistory);
     setInput('');
     setIsLoading(true);
 
@@ -93,7 +94,10 @@ export default function AskAIPage() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage.content }),
+        body: JSON.stringify({ 
+          history: chatHistory.map(msg => ({ role: msg.role === 'ai' ? 'model' : 'user', parts: [{ text: msg.content }] })),
+          message: userMessage.content
+        }),
       });
 
       if (!res.ok) throw new Error('Failed');
@@ -122,7 +126,7 @@ export default function AskAIPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [input, isLoading]);
+  }, [input, isLoading, chatHistory]);
 
   return (
     /* 🔒 Fixed height to account for navbar (mt-16) */
