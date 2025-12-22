@@ -1,12 +1,15 @@
+
 import * as admin from 'firebase-admin';
 
+// Ensure the service account JSON is parsed correctly from the environment variable
+const serviceAccount = JSON.parse(
+  process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string
+);
+
+// Check if there are any initialized apps and initialize one if not
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
+    credential: admin.credential.cert(serviceAccount),
   });
 }
 
