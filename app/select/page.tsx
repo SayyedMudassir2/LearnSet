@@ -58,7 +58,7 @@ export default function SelectPage() {
 
   const handleRedirect = () => {
     if (branch && type) {
-        let path = ''';
+        let path = '';
         if (isSemesterDisabled) {
             path = `/${branch}/${subject || 'general'}/${type}`;
         } else if (subject && semester) {
