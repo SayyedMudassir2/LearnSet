@@ -1,19 +1,12 @@
 import * as admin from 'firebase-admin';
 
-const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-
-if (!serviceAccountJson) {
-  throw new Error(
-    'FIREBASE_SERVICE_ACCOUNT_KEY is not defined. Add it to Vercel environment variables.'
-  );
-}
-
-const serviceAccount = JSON.parse(serviceAccountJson);
-
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    // databaseURL: process.env.FIREBASE_DATABASE_URL, // optional
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    }),
   });
 }
 
