@@ -1,0 +1,59 @@
+PROJECT NAME: LearnSet
+
+== OVERVIEW ==
+
+LearnSet is a modern, full-stack web application designed to be a comprehensive digital study companion for students, with a primary focus on the Maharashtra State Board of Technical Education (MSBTE) curriculum. The core problem it solves is the fragmentation and lack of easy access to quality, curriculum-specific study materials. It provides a centralized, user-friendly platform where students can find notes, ask curriculum-aware questions to an AI, and manage their academic resources effectively.
+
+== TARGET AUDIENCE ==
+
+The primary target audience is students enrolled in diploma programs under the Maharashtra State Board of Technical Education (MSBTE). However, its architecture and features are flexible enough to be adapted for students in other technical fields or educational boards.
+
+== CORE FEATURES (DETAILED) ==
+
+1.  **Secure User Authentication System:**
+    -   **Registration:** New users can create an account using their email and a password. The registration process includes server-side validation to ensure data integrity.
+    -   **OTP Verification:** To enhance security and validate user emails, a One-Time Password (OTP) is sent to the user's email address upon registration. The user must enter this OTP to complete the registration process.
+    -   **Login:** Registered users can log in securely. The application uses Firebase Authentication, which handles session management and provides a robust, token-based auth system.
+    -   **Password Reset:** Users who have forgotten their password can initiate a reset process. They enter their email address, and a secure, time-sensitive password reset link is sent to them via email. This link directs them to a page where they can set a new password.
+    -   **Admin Role:** The system has a concept of an 'admin' user, who has access to a special Admin Panel for managing the application.
+
+2.  **AI-Powered Assistant ("Ask AI")**:
+    -   This is a standout feature where students can ask questions and receive instant, relevant answers. 
+    -   The backend is powered by a large language model (LLM) that can be trained or fine-tuned on the specific MSBTE syllabus and textbooks. 
+    -   The interface is a chat-based system, providing an intuitive way for students to get help with complex topics, definitions, or problem-solving steps.
+
+3.  **Study Materials Hub:**
+    -   This section is designed to be the central repository for all study resources.
+    -   It will host high-quality, curated notes, previous year question papers (PYQs), and other relevant documents.
+    -   The interface is designed with future functionality in mind, including robust search and filtering capabilities. Users will be able to filter materials by branch (e.g., Computer Engineering, Mechanical Engineering) and by semester.
+
+4.  **User-Generated Content (Upload Notes):**
+    -   To foster a collaborative environment, registered users have the ability to upload their own study materials. 
+    -   This feature allows the content library to grow organically and stay up-to-date with contributions from the student community.
+
+== TECHNICAL ARCHITECTURE ==
+
+LearnSet is built on a modern, robust, and scalable technology stack.
+
+-   **Framework:** Next.js (using the App Router). This allows for a combination of Server-Side Rendering (SSR) for fast initial page loads and Client-Side Rendering (CSR) for dynamic, interactive components.
+-   **Language:** TypeScript. This adds static typing to JavaScript, which significantly improves code quality, maintainability, and developer experience by catching errors early.
+-   **Styling:** Tailwind CSS. A utility-first CSS framework that allows for rapid development of a custom, responsive user interface.
+-   **Backend Logic:** Handled via Next.js API Routes. These are serverless functions that live within the `app/api/` directory and handle tasks like user registration, sending emails, and processing AI queries.
+-   **Database:** Google Firestore. A flexible, scalable NoSQL database used for storing application data such as user profiles, password reset tokens, and metadata for study materials.
+-   **Authentication:** Firebase Authentication. Provides a complete and secure solution for managing user identities, including sign-in, sign-up, and session persistence.
+-   **Email Services:** Nodemailer. A Node.js library used to send transactional emails for OTP verification and password resets. It is configured to work with an email service like Gmail in the current setup.
+-   **Background Jobs:** Inngest. Used for handling long-running or asynchronous tasks in the background, ensuring that the user interface remains fast and responsive.
+
+== PROJECT STRUCTURE ==
+
+The project follows the standard Next.js App Router structure:
+
+-   `app/`: The main directory containing all the application's routes and pages.
+-   `app/(auth)/`: A route group for authentication-related pages (e.g., `/login`, `/register`, `/forgot-password`).
+-   `app/(pages)/`: A route group for the main content pages of the application (e.g., `/`, `/about`, `/study-materials`).
+-   `app/api/`: Contains all the backend API endpoints.
+-   `components/`: Holds reusable React components (e.g., Navbar, Buttons, Input fields) used throughout the application.
+-   `lib/`: A directory for utility functions and library initializations, such as the Firebase admin SDK configuration (`firebase-admin.ts`) and the Nodemailer setup.
+-   `context/`: Contains React Context providers, such as the `AuthContext` which provides authentication state to the entire application.
+-   `public/`: For static assets like images, logos, and fonts.
+-   `.env.local`: A crucial file (not committed to version control) that stores all the necessary environment variables and secret keys for services like Firebase and Nodemailer.
